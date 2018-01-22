@@ -1,4 +1,4 @@
-﻿// <copyright file="DataSerializer{T}.cs" company="OI">
+﻿// <copyright file="JsonDataSerializer{T}.cs" company="OI">
 // Copyright (c) OI. All rights reserved.
 // </copyright>
 
@@ -11,7 +11,7 @@ namespace SettingToDataGrid.Interfaces
     /// </summary>
     /// <typeparam name="T">A model of type T</typeparam>
     /// <seealso cref="IDataSerializer{T}" />
-    internal class DataSerializer<T> : IDataSerializer<T>
+    internal class JsonDataSerializer<T> : IDataSerializer<T>
     {
         /// <summary>
         /// Gets the data.
@@ -20,14 +20,20 @@ namespace SettingToDataGrid.Interfaces
         /// <returns>A BindingList of Type T</returns>
         public BindingList<T> GetData(string data)
         {
-            var bindingList = Newtonsoft.Json.JsonConvert.DeserializeObject<BindingList<T>>(data);
-
-            if (bindingList == null)
+            try
             {
-                bindingList = new BindingList<T>();
-            }
+                var bindingList = Newtonsoft.Json.JsonConvert.DeserializeObject<BindingList<T>>(data);
+                if (bindingList == null)
+                {
+                    bindingList = new BindingList<T>();
+                }
 
-            return bindingList;
+                return bindingList;
+            }
+            catch
+            {
+                return new BindingList<T>();
+            }
         }
 
         /// <summary>

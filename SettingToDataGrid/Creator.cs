@@ -19,10 +19,13 @@ namespace SettingToDataGrid
         /// <typeparam name="T">Data model</typeparam>
         /// <param name="data">The data.</param>
         /// <param name="dataGridView">The data grid view.</param>
-        /// <returns>An IDataHander</returns>
-        public static IDataHandler<T> Get<T>(string data, DataGridView dataGridView)
+        /// <param name="useXmlSerialization">if set to <c>true</c> [use XML serialization].</param>
+        /// <returns>
+        /// An IDataHander
+        /// </returns>
+        public static IDataHandler<T> Get<T>(string data, DataGridView dataGridView, bool useXmlSerialization = false)
         {
-            using (var kernel = new StandardKernel(new Modules()))
+            using (var kernel = new StandardKernel(new Modules(useXmlSerialization)))
             {
                 var factory = kernel.Get<IDataHandlerFactory>();
 

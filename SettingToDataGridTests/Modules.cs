@@ -19,7 +19,7 @@ namespace SettingToDataGridTests
         /// </summary>
         public override void Load()
         {
-            this.Kernel.Bind(typeof(IDataSerializer<>)).To(typeof(DataSerializer<>)).InSingletonScope();
+            this.Kernel.Bind(typeof(IDataSerializer<>)).To(typeof(JsonDataSerializer<>)).InSingletonScope();
 
             // Bind to an interface that employs a generic.
             this.Kernel.Bind(typeof(IDataHandler<>)).To(typeof(DataHandler<>));
