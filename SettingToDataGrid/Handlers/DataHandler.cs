@@ -15,6 +15,7 @@ namespace SettingToDataGrid.Handlers
     /// <typeparam name="T">A model</typeparam>
     /// <seealso cref="IDataHandler{T}" />
     internal class DataHandler<T> : IDataHandler<T>
+        where T : class
     {
         /// <summary>
         /// The data provider
@@ -66,7 +67,7 @@ namespace SettingToDataGrid.Handlers
         /// <summary>
         /// Gets or sets called when data changed
         /// </summary>
-        public Action<string> OnDataChangedHandler { get; set; }
+        public Action<string> OnDataChanged { get; set; }
 
         /// <summary>
         /// Adds the specified data.
@@ -86,9 +87,21 @@ namespace SettingToDataGrid.Handlers
             this.bindingList.Remove(data);
         }
 
+        /// <summary>
+        /// Removes the selected row.
+        /// </summary>
+        public void RemoveSelectedRow()
+        {
+            if (this.dataGridView.CurrentRow != null)
+            {
+                var listItem = this.dataGridView.CurrentRow.DataBoundItem as T;
+                this.bindingList.Remove(listItem);
+            }
+        }
+
         private void RaiseOnDataChangedEvent(object sender, ListChangedEventArgs e)
         {
-            this.OnDataChangedHandler?.Invoke(this.dataSerializer.GetData(this.bindingList));
+            this.OnDataChanged?.Invoke(this.dataSerializer.GetData(this.bindingList));
         }
 
         private void CellEdited(object sender, DataGridViewCellEventArgs e)

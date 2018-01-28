@@ -18,7 +18,7 @@ namespace SettingToDataGrid.Interfaces
         /// <value>
         /// The on data changed handler.
         /// </value>
-        Action<string> OnDataChangedHandler { get; set; }
+        Action<string> OnDataChanged { get; set; }
 
         /// <summary>
         /// Adds the specified data.
@@ -31,5 +31,10 @@ namespace SettingToDataGrid.Interfaces
         /// </summary>
         /// <param name="data">The data.</param>
         void Remove(T data);
+
+        /// <summary>
+        /// Removes the selected row.
+        /// </summary>
+        void RemoveSelectedRow();
     }
 }
