@@ -4,26 +4,29 @@
 
 namespace SettingToDataGrid.Interfaces
 {
-    using System.ComponentModel;
+    using SettingToDataGrid.Models;
 
     /// <summary>
     /// Serializes data
     /// </summary>
     /// <typeparam name="T">A model</typeparam>
     internal interface IDataSerializer<T>
+        where T : class
     {
         /// <summary>
         /// Gets the data.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns>BindingList with models of type T</returns>
-        BindingList<T> GetData(string data);
+        ContainerModel<T> GetData(string data);
 
         /// <summary>
         /// Gets the data.
         /// </summary>
-        /// <param name="bindingList">The binding list.</param>
-        /// <returns>BindingList with models of type T</returns>
-        string GetData(BindingList<T> bindingList);
+        /// <param name="model">The model.</param>
+        /// <returns>
+        /// BindingList with models of type T
+        /// </returns>
+        string GetData(ContainerModel<T> model);
     }
 }

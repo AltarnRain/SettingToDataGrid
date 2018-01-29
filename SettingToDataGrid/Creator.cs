@@ -24,6 +24,7 @@ namespace SettingToDataGrid
         /// An IDataHander
         /// </returns>
         public static IDataHandler<T> Get<T>(string data, DataGridView dataGridView, bool useXmlSerialization = false)
+            where T : class
         {
             using (var kernel = new StandardKernel(new Modules(useXmlSerialization)))
             {

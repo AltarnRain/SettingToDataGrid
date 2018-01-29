@@ -54,7 +54,7 @@ namespace SettingToDataGridTests
             var dataGrid = new DataGridView();
             var handler = factory.Create<Data>(string.Empty, dataGrid);
 
-            handler.OnDataChanged = (string value) =>
+            handler.OnDataChanged += (string value) =>
             {
                 Assert.IsNotNull(value);
             };

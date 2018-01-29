@@ -5,20 +5,21 @@
 namespace SettingToDataGrid.Interfaces
 {
     using System;
+    using System.Collections.Generic;
+    using SettingToDataGrid.Handlers;
+    using static SettingToDataGrid.Events.Events;
 
     /// <summary>
     /// DataHandler interface
     /// </summary>
     /// <typeparam name="T">A model</typeparam>
     public interface IDataHandler<T>
+        where T : class
     {
         /// <summary>
-        /// Gets or sets called when data changed
+        /// Occurs when [on data changed].
         /// </summary>
-        /// <value>
-        /// The on data changed handler.
-        /// </value>
-        Action<string> OnDataChanged { get; set; }
+        event DataChangedEvent OnDataChanged;
 
         /// <summary>
         /// Adds the specified data.
@@ -36,5 +37,11 @@ namespace SettingToDataGrid.Interfaces
         /// Removes the selected row.
         /// </summary>
         void RemoveSelectedRow();
+
+        /// <summary>
+        /// Returns the current data in an IEnumerable<typeparamref name="T">Any class</typeparamref>.
+        /// </summary>
+        /// <returns>IEnumerable<typeparamref name="T"/></returns>
+        IEnumerable<T> GetData();
     }
 }

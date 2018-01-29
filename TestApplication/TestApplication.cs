@@ -34,7 +34,7 @@ namespace TestApplication
         {
             this.InitializeComponent();
             this.dataRowHandler = Creator.Get<TestData>(Settings.Default.TestData, this.DataGrid);
-            this.dataRowHandler.OnDataChanged = this.OnDataChanges;
+            this.dataRowHandler.OnDataChanged += this.OnDataChanges;
         }
 
         /// <summary>

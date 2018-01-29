@@ -30,7 +30,7 @@ namespace SettingToDataGrid.Factories
         /// <value>
         /// The kernel.
         /// </value>
-        public IKernel Kernel { get; }
+        private IKernel Kernel { get; }
 
         /// <summary>
         /// Creates the specified data.
@@ -42,6 +42,7 @@ namespace SettingToDataGrid.Factories
         /// DataHAndler for type T
         /// </returns>
         public IDataHandler<T> Create<T>(string settingName, DataGridView dataGridView)
+            where T : class
         {
             return this.Kernel.Get<IDataHandler<T>>(new ConstructorArgument("data", settingName), new ConstructorArgument("dataGridView", dataGridView));
         }

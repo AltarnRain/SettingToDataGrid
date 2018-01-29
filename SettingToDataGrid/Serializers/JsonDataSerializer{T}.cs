@@ -5,6 +5,7 @@
 namespace SettingToDataGrid.Interfaces
 {
     using System.ComponentModel;
+    using SettingToDataGrid.Models;
 
     /// <summary>
     /// Serializes and Deserializes data of model T
@@ -12,38 +13,42 @@ namespace SettingToDataGrid.Interfaces
     /// <typeparam name="T">A model of type T</typeparam>
     /// <seealso cref="IDataSerializer{T}" />
     internal class JsonDataSerializer<T> : IDataSerializer<T>
+        where T : class
     {
         /// <summary>
         /// Gets the data.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns>A BindingList of Type T</returns>
-        public BindingList<T> GetData(string data)
+        public ContainerModel<T> GetData(string data)
         {
             try
             {
-                var bindingList = Newtonsoft.Json.JsonConvert.DeserializeObject<BindingList<T>>(data);
-                if (bindingList == null)
+                var container = Newtonsoft.Json.JsonConvert.DeserializeObject<ContainerModel<T>>(data);
+                if (container == null)
                 {
-                    bindingList = new BindingList<T>();
+                    container = new ContainerModel<T>();
                 }
 
-                return bindingList;
+                return container;
             }
             catch
             {
-                return new BindingList<T>();
+                return new ContainerModel<T>();
             }
         }
 
         /// <summary>
         /// Gets the data.
         /// </summary>
-        /// <param name="bindingList">The binding list.</param>
-        /// <returns>A string containing the serialized data of BindingList<typeparamref name="T"/></returns>
-        public string GetData(BindingList<T> bindingList)
+        /// <param name="container">The container.</param>
+        /// <returns>
+        /// A string containing the serialized data of BindingList<typeparamref name="T" />
+        /// </returns>
+        public string GetData(ContainerModel<T> container)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(bindingList);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(container);
+            return json;
         }
     }
 }

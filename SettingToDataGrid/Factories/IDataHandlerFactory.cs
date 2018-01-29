@@ -13,14 +13,6 @@ namespace SettingToDataGrid.Interfaces
     internal interface IDataHandlerFactory
     {
         /// <summary>
-        /// Gets the kernel.
-        /// </summary>
-        /// <value>
-        /// The kernel.
-        /// </value>
-        IKernel Kernel { get; }
-
-        /// <summary>
         /// Creates the specified data.
         /// </summary>
         /// <typeparam name="T">A model</typeparam>
@@ -29,6 +21,7 @@ namespace SettingToDataGrid.Interfaces
         /// <returns>
         /// A DataHandler
         /// </returns>
-        IDataHandler<T> Create<T>(string settingName, DataGridView dataGridView);
+        IDataHandler<T> Create<T>(string settingName, DataGridView dataGridView)
+            where T : class;
     }
 }

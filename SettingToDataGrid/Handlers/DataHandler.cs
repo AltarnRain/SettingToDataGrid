@@ -4,10 +4,13 @@
 
 namespace SettingToDataGrid.Handlers
 {
-    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
     using System.Windows.Forms;
     using SettingToDataGrid.Interfaces;
+    using SettingToDataGrid.Models;
+    using static SettingToDataGrid.Events.Events;
 
     /// <summary>
     /// Handlers data manipulation
@@ -35,7 +38,7 @@ namespace SettingToDataGrid.Handlers
         /// <summary>
         /// The binding list
         /// </summary>
-        private BindingList<T> bindingList = new BindingList<T>();
+        private ContainerModel<T> container = new ContainerModel<T>();
 
         /// <summary>
         /// The binding source
@@ -54,20 +57,25 @@ namespace SettingToDataGrid.Handlers
             this.settingName = data;
             this.dataGridView = dataGridView;
 
-            this.bindingList = this.dataSerializer.GetData(data);
-            this.bindingSource.DataSource = this.bindingList;
-            this.bindingList.ListChanged += this.RaiseOnDataChangedEvent;
+            this.container = this.dataSerializer.GetData(data);
+            this.bindingSource.DataSource = this.container.Data;
+            this.container.Data.ListChanged += this.RaiseOnDataChangedEvent;
             this.dataGridView.CellEndEdit += this.CellEdited;
+            this.dataGridView.ColumnWidthChanged += this.ColumnWidthChanges;
 
             dataGridView.DataSource = this.bindingSource;
             dataGridView.AutoGenerateColumns = true;
             dataGridView.AutoSize = true;
+            dataGridView.AllowUserToAddRows = false;
+            dataGridView.AllowUserToDeleteRows = false;
+
+            this.SetColumnWidths(dataGridView);
         }
 
         /// <summary>
         /// Gets or sets called when data changed
         /// </summary>
-        public Action<string> OnDataChanged { get; set; }
+        public event DataChangedEvent OnDataChanged;
 
         /// <summary>
         /// Adds the specified data.
@@ -75,7 +83,7 @@ namespace SettingToDataGrid.Handlers
         /// <param name="data">The data.</param>
         public void Add(T data)
         {
-            this.bindingList.Add(data);
+            this.container.Data.Add(data);
         }
 
         /// <summary>
@@ -84,7 +92,7 @@ namespace SettingToDataGrid.Handlers
         /// <param name="data">The data.</param>
         public void Remove(T data)
         {
-            this.bindingList.Remove(data);
+            this.container.Data.Remove(data);
         }
 
         /// <summary>
@@ -94,19 +102,73 @@ namespace SettingToDataGrid.Handlers
         {
             if (this.dataGridView.CurrentRow != null)
             {
-                var listItem = this.dataGridView.CurrentRow.DataBoundItem as T;
-                this.bindingList.Remove(listItem);
+                var dataRow = this.dataGridView.CurrentRow.DataBoundItem as T;
+                this.Remove(dataRow);
             }
         }
 
-        private void RaiseOnDataChangedEvent(object sender, ListChangedEventArgs e)
+        /// <summary>
+        /// Returns the current data in an IEnumerable<typeparamref name="T">Any class</typeparamref>.
+        /// </summary>
+        /// <returns>IEnumerable<typeparamref name="T"/></returns>
+        public IEnumerable<T> GetData()
         {
-            this.OnDataChanged?.Invoke(this.dataSerializer.GetData(this.bindingList));
+            return this.container.Data.AsEnumerable<T>();
         }
 
+        /// <summary>
+        /// Raises the on data changed event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ListChangedEventArgs"/> instance containing the event data.</param>
+        private void RaiseOnDataChangedEvent(object sender, ListChangedEventArgs e)
+        {
+            this.OnDataChanged?.Invoke(this.dataSerializer.GetData(this.container));
+        }
+
+        /// <summary>
+        /// Cells the edited.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DataGridViewCellEventArgs"/> instance containing the event data.</param>
         private void CellEdited(object sender, DataGridViewCellEventArgs e)
         {
             this.RaiseOnDataChangedEvent(null, null);
+        }
+
+        /// <summary>
+        /// Columns the width changes.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DataGridViewColumnEventArgs"/> instance containing the event data.</param>
+        private void ColumnWidthChanges(object sender, DataGridViewColumnEventArgs e)
+        {
+            this.container.ColumnWidths.Clear();
+
+            foreach (var col in this.dataGridView.Columns.Cast<DataGridViewColumn>())
+            {
+                this.container.ColumnWidths.Add(col.Width);
+            }
+
+            this.RaiseOnDataChangedEvent(null, null);
+        }
+
+        /// <summary>
+        /// Sets the column widths.
+        /// </summary>
+        /// <param name="dataGridView">The data grid view.</param>
+        private void SetColumnWidths(DataGridView dataGridView)
+        {
+            if (this.container.ColumnWidths.Count > 0)
+            {
+                foreach (var col in dataGridView.Columns.Cast<DataGridViewColumn>())
+                {
+                    if (this.container.ColumnWidths[col.Index].HasValue)
+                    {
+                        col.Width = this.container.ColumnWidths[col.Index].Value;
+                    }
+                }
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ namespace SettingToDataGrid
     using System.Xml;
     using System.Xml.Serialization;
     using SettingToDataGrid.Interfaces;
+    using SettingToDataGrid.Models;
 
     /// <summary>
     /// Xml Serializer
@@ -17,6 +18,7 @@ namespace SettingToDataGrid
     /// <typeparam name="T">A model</typeparam>
     /// <seealso cref="SettingToDataGrid.Interfaces.IDataSerializer{T}" />
     internal class XmlDataSerializer<T> : IDataSerializer<T>
+        where T : class
     {
         /// <summary>
         /// Gets the data.
@@ -25,7 +27,7 @@ namespace SettingToDataGrid
         /// <returns>
         /// BindingList with models of type T
         /// </returns>
-        public BindingList<T> GetData(string data)
+        public ContainerModel<T> GetData(string data)
         {
             if (data == null)
             {
@@ -39,7 +41,7 @@ namespace SettingToDataGrid
 
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    var returnValue = xmlSerializer.Deserialize(reader) as BindingList<T>;
+                    var returnValue = xmlSerializer.Deserialize(reader) as ContainerModel<T>;
 
                     if (returnValue == null)
                     {
@@ -53,7 +55,7 @@ namespace SettingToDataGrid
             }
             catch
             {
-                return new BindingList<T>();
+                return new ContainerModel<T>();
             }
         }
 
@@ -65,7 +67,7 @@ namespace SettingToDataGrid
         /// BindingList with models of type T
         /// </returns>
         /// <exception cref="Exception">An error occurred</exception>
-        public string GetData(BindingList<T> bindingList)
+        public string GetData(ContainerModel<T> bindingList)
         {
             if (bindingList == null)
             {
@@ -74,7 +76,7 @@ namespace SettingToDataGrid
 
             try
             {
-                var xmlserializer = new XmlSerializer(typeof(BindingList<T>));
+                var xmlserializer = new XmlSerializer(typeof(ContainerModel<T>));
                 var stringWriter = new StringWriter();
 
                 XmlWriterSettings settings = new XmlWriterSettings();
