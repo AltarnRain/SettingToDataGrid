@@ -98,6 +98,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..\Mod-Re-Oganizer\Libraries</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..\Output</PostBuildEvent>
   </PropertyGroup>
 </Project>
